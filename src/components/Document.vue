@@ -143,66 +143,64 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
 <template>
     <n-card @mouseenter="hover = true" @mouseleave="hover = false"
         :style="editing ? { border: '1px solid #f2c97d' } : hover ? { border: '1px solid #63e2b7' } : { border: '' }">
-        <n-scrollbar x-scrollable>
-            <n-form :ref="formRef" :model="modDic" :label-placement="editing ? 'top' : 'left'" size="small"
-                label-width="auto">
-                <n-form-item class="document_form" v-for="(fieldValue, key) in rawDocument" :key="key"
-                    :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)" :path="key.toString()">
-                    <n-space v-if="editing == false">
-                        {{ fieldValue }}
-                    </n-space>
-                    <!-- string -->
-                    <template v-else-if="typeof fieldValue == 'string'">
-                        <n-input v-model:value="modDic[key.toString()]" :placeholder="fieldValue" />
-                    </template>
-                    <!-- number -->
-                    <template v-else-if="typeof fieldValue == 'number'">
-                        <n-input-number v-model:value="modDic[key.toString()]" :placeholder="fieldValue.toString()"
-                            :validator="(x: number) => x >= 0" :style="{ width: '100%' }" />
-                    </template>
-                    <!-- boolean -->
-                    <template v-else-if="typeof fieldValue == 'boolean'">
-                        <n-switch v-model:value="modDic[key.toString()]" />
-                    </template>
-                    <!-- array -->
-                    <template
-                        v-else-if="Array.isArray(fieldValue) && (typeof fieldValue[0] == 'string' || fieldValue.length == 0)">
-                        <n-dynamic-input v-model:value="modDic[key.toString()]" />
-                    </template>
-                    <!-- array of object -->
-                    <template v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object'">
-                        <n-dynamic-input v-model:value="modDic[key.toString()]" :on-create="() => {
-                            return {
-                                asset: '',
-                                weightControlOn: false,
-                                weightMin: 0,
-                                weightMax: 0,
-                                quantityControlOn: false,
-                                quantityMin: '',
-                                quantityMax: '',
-                            }
-                        }">
-                            <template #default="{ value }">
-                                <div style="display: flex; align-items: center; width: 100%">
-                                    <n-input v-model:value="value.asset" placeholder="Asset" type="text"
-                                        style="margin-right: 8px; width:17%" />
-                                    <n-switch v-model:value="value.weightControlOn" style="margin-right: 3px" />
-                                    <n-input-number v-model:value="value.weightMin" placeholder="weightMin"
-                                        :show-button="false" style="margin-right: 3px; width:17%" />
-                                    <n-input-number v-model:value="value.weightMax" placeholder="weightMax"
-                                        :show-button="false" style="margin-right: 8px; width:17%" />
-                                    <n-switch v-model:value="value.quantityControlOn" style="margin-right: 3px" />
-                                    <n-input v-model:value="value.quantityMin" placeholder="quantityMin"
-                                        :show-button="false" style="margin-right: 3px; width:17%" />
-                                    <n-input v-model:value="value.quantityMax" placeholder="quantityMax"
-                                        :show-button="false" style="margin-right: -15px; width:17%" />
-                                </div>
-                            </template>
-                        </n-dynamic-input>
-                    </template>
-                </n-form-item>
-            </n-form>
-        </n-scrollbar>
+        <n-form :ref="formRef" :model="modDic" :label-placement="editing ? 'top' : 'left'" size="small"
+            label-width="auto">
+            <n-form-item class="document_form" v-for="(fieldValue, key) in rawDocument" :key="key"
+                :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)" :path="key.toString()">
+                <n-space v-if="editing == false">
+                    {{ fieldValue }}
+                </n-space>
+                <!-- string -->
+                <template v-else-if="typeof fieldValue == 'string'">
+                    <n-input v-model:value="modDic[key.toString()]" :placeholder="fieldValue" />
+                </template>
+                <!-- number -->
+                <template v-else-if="typeof fieldValue == 'number'">
+                    <n-input-number v-model:value="modDic[key.toString()]" :placeholder="fieldValue.toString()"
+                        :validator="(x: number) => x >= 0" :style="{ width: '100%' }" />
+                </template>
+                <!-- boolean -->
+                <template v-else-if="typeof fieldValue == 'boolean'">
+                    <n-switch v-model:value="modDic[key.toString()]" />
+                </template>
+                <!-- array -->
+                <template
+                    v-else-if="Array.isArray(fieldValue) && (typeof fieldValue[0] == 'string' || fieldValue.length == 0)">
+                    <n-dynamic-input v-model:value="modDic[key.toString()]" />
+                </template>
+                <!-- array of object -->
+                <template v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object'">
+                    <n-dynamic-input v-model:value="modDic[key.toString()]" :on-create="() => {
+                        return {
+                            asset: '',
+                            weightControlOn: false,
+                            weightMin: 0,
+                            weightMax: 0,
+                            quantityControlOn: false,
+                            quantityMin: '',
+                            quantityMax: '',
+                        }
+                    }">
+                        <template #default="{ value }">
+                            <div style="display: flex; align-items: center; width: 100%">
+                                <n-input v-model:value="value.asset" placeholder="Asset" type="text"
+                                    style="margin-right: 8px; width:17%" />
+                                <n-switch v-model:value="value.weightControlOn" style="margin-right: 3px" />
+                                <n-input-number v-model:value="value.weightMin" placeholder="weightMin"
+                                    :show-button="false" style="margin-right: 3px; width:17%" />
+                                <n-input-number v-model:value="value.weightMax" placeholder="weightMax"
+                                    :show-button="false" style="margin-right: 8px; width:17%" />
+                                <n-switch v-model:value="value.quantityControlOn" style="margin-right: 3px" />
+                                <n-input v-model:value="value.quantityMin" placeholder="quantityMin"
+                                    :show-button="false" style="margin-right: 3px; width:17%" />
+                                <n-input v-model:value="value.quantityMax" placeholder="quantityMax"
+                                    :show-button="false" style="margin-right: -15px; width:17%" />
+                            </div>
+                        </template>
+                    </n-dynamic-input>
+                </template>
+            </n-form-item>
+        </n-form>
 
         <template #action>
             <n-space>
@@ -230,7 +228,6 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
                     </template>
                     Clone
                 </n-tooltip>
-
                 <n-tooltip trigger="hover">
                     <template #trigger>
                         <n-button primary circle @click="handleCancelEditClick" :disabled="!editing">
