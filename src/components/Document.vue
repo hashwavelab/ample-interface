@@ -144,10 +144,10 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
     <n-card @mouseenter="hover = true" @mouseleave="hover = false"
         :style="editing ? { border: '1px solid #f2c97d' } : hover ? { border: '1px solid #63e2b7' } : { border: '' }">
         <n-scrollbar x-scrollable>
-            <n-form :ref="formRef" :model="modDic" label-placement="top" size="small" label-width="auto">
+            <n-form :ref="formRef" :model="modDic" :label-placement="editing ? 'top' : 'left'" size="small"
+                label-width="auto">
                 <n-form-item class="document_form" v-for="(fieldValue, key) in rawDocument" :key="key"
-                    :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)"
-                    :path="key.toString()">
+                    :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)" :path="key.toString()">
                     <n-space v-if="editing == false">
                         {{ fieldValue }}
                     </n-space>
@@ -264,8 +264,7 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
             <n-form :ref="formRef" :model="modDic" label-placement="top" size="small" label-width="auto"
                 :style="{ width: '100%' }">
                 <n-form-item class="document_form" v-for="(fieldValue, key) in rawDocument" :key="key"
-                    :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)"
-                    :path="key.toString()">
+                    :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)" :path="key.toString()">
                     <!-- string -->
                     <template v-if="typeof fieldValue == 'string'">
                         <n-input v-model:value="modDic[key.toString()]" :placeholder="fieldValue" />
