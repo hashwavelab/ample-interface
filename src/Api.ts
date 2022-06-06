@@ -3,7 +3,7 @@ import axios from "axios"
 const url = 'https://ample.hashwave.io/api/';
 
 class Api {
-    static async getMessageToSign(address: string): Promise<string>{
+    static async getMessageToSign(address: string): Promise<string> {
         return new Promise((resolve, reject) => {
             axios.get(url + 'auth/msg', {
                 params: {
@@ -95,7 +95,7 @@ class Api {
             });
     }
 
-    static newDocument(address: string, signature: string, collectionName: string, modDic: any): Promise<number> {
+    static newDocument(address: string, signature: string, collectionName: string, modDic: any): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
             axios.post(url + 'auth/insert/document', {
                 address: address,
@@ -104,10 +104,10 @@ class Api {
                 modDic: modDic
             })
                 .then(function (res: any) {
-                    resolve(res.status)
+                    resolve([res.status, res.data])
                 })
                 .catch(function (err: any) {
-                    resolve(err.response.status)
+                    resolve([err.response.status, ""])
                 });
         })
     }
