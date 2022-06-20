@@ -143,7 +143,7 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
     <n-card @mouseenter="hover = true" @mouseleave="hover = false"
         :style="editing ? { border: '1px solid #f2c97d' } : hover ? { border: '1px solid #63e2b7' } : { border: '' }">
         <n-form :ref="formRef" :model="modDic" :label-placement="editing ? 'top' : 'left'" size="small"
-            label-width="auto" :style="{'margin-bottom':'-20px'}">
+            label-width="auto" :style="{ 'margin-bottom': '-20px' }">
             <n-form-item class="document_form" v-for="(fieldValue, key) in rawDocument" :key="key"
                 :label="key.toString().slice(0, 1).toUpperCase() + key.toString().slice(1,)" :path="key.toString()"
                 :style="{ 'margin-bottom': '-15px', 'align-items': 'start' }">
@@ -171,8 +171,9 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
                         v-else-if="Array.isArray(fieldValue) && (typeof fieldValue[0] == 'string' || fieldValue.length == 0)">
                         <n-dynamic-input v-model:value="modDic[key.toString()]" />
                     </template>
-                    <!-- array of object -->
-                    <template v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object'">
+                    <!-- array of objects -->
+                    <template
+                        v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object' && data.collectionName == 'source_position_controls'">
                         <n-dynamic-input v-model:value="modDic[key.toString()]" :on-create="() => {
                             return {
                                 asset: '',
@@ -202,10 +203,27 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
                             </template>
                         </n-dynamic-input>
                     </template>
+                    <template
+                        v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object' && data.collectionName == 'evm_curve_pools'">
+                        <n-dynamic-input v-model:value="modDic[key.toString()]" :on-create="() => {
+                            return {
+                                address: '',
+                                decimals: 0,
+                            }
+                        }">
+                            <template #default="{ value }">
+                                <div style="display: flex; align-items: center; width: 100%">
+                                    <n-input v-model:value="value.address" placeholder="Address" type="text"
+                                        style="margin-right: 8px; width:85%" />
+                                    <n-input-number v-model:value="value.decimals" placeholder="decimals"
+                                        :show-button="false" style="margin-right: 3px; width:15%" />
+                                </div>
+                            </template>
+                        </n-dynamic-input>
+                    </template>
                 </n-scrollbar>
             </n-form-item>
         </n-form>
-
 
         <template #action>
             <n-space>
@@ -288,18 +306,19 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
                             <n-dynamic-input v-model:value="modDic[key.toString()]" />
                         </template>
                         <!-- array of object -->
-                        <template v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object'">
+                        <template
+                            v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object' && data.collectionName == 'source_position_controls'">
                             <n-dynamic-input v-model:value="modDic[key.toString()]" :on-create="() => {
-                            return {
-                                asset: '',
-                                weightControlOn: false,
-                                weightMin: 0,
-                                weightMax: 0,
-                                quantityControlOn: false,
-                                quantityMin: '',
-                                quantityMax: '',
-                            }
-                        }">
+                                return {
+                                    asset: '',
+                                    weightControlOn: false,
+                                    weightMin: 0,
+                                    weightMax: 0,
+                                    quantityControlOn: false,
+                                    quantityMin: '',
+                                    quantityMax: '',
+                                }
+                            }">
                                 <template #default="{ value }">
                                     <div style="display: flex; align-items: center; width: 100%">
                                         <n-input v-model:value="value.asset" placeholder="Asset" type="text"
@@ -314,6 +333,24 @@ function checkDuplicatedElementsInModDic(modDic: any): boolean {
                                             :show-button="false" style="margin-right: 3px; width:17%" />
                                         <n-input v-model:value="value.quantityMax" placeholder="quantityMax"
                                             :show-button="false" style="margin-right: -15px; width:17%" />
+                                    </div>
+                                </template>
+                            </n-dynamic-input>
+                        </template>
+                        <template
+                            v-else-if="Array.isArray(fieldValue) && typeof fieldValue[0] == 'object' && data.collectionName == 'evm_curve_pools'">
+                            <n-dynamic-input v-model:value="modDic[key.toString()]" :on-create="() => {
+                                return {
+                                    address: '',
+                                    decimals: 0,
+                                }
+                            }">
+                                <template #default="{ value }">
+                                    <div style="display: flex; align-items: center; width: 100%">
+                                        <n-input v-model:value="value.address" placeholder="Address" type="text"
+                                            style="margin-right: 8px; width:85%" />
+                                        <n-input-number v-model:value="value.decimals" placeholder="decimals"
+                                            :show-button="false" style="margin-right: 3px; width:15%" />
                                     </div>
                                 </template>
                             </n-dynamic-input>
