@@ -3,6 +3,19 @@ import axios from "axios"
 const url = 'https://ample.hashwave.io/api/';
 
 class Api {
+    static async getLoginStatus(): Promise<boolean>{
+        return new Promise((resolve, reject) => {
+            axios.get(url)
+                .then((res: { data: boolean; }) => {
+                    let data = res.data;
+                    resolve(data);
+                })
+                .catch((err: any) => {
+                    reject(err);
+                })
+        });
+    }
+
     static async getMessageToSign(address: string): Promise<string> {
         return new Promise((resolve, reject) => {
             axios.get(url + 'auth/msg', {

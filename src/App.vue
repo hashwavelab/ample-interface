@@ -12,6 +12,7 @@ let selectedSource = ref<string | null>(null)
 let rawDB: any = reactive({})
 let sourceList: any[] = reactive([])
 let collectionList: string[] = reactive([])
+let login = ref(false)
 
 function handleAddCollectionClick() {
   console.log("under development")
@@ -19,17 +20,20 @@ function handleAddCollectionClick() {
 
 onMounted(async () => {
   try {
-    let db = await Api.getDB()
-    for (let index in db) {
-      rawDB[index] = db[index]
-      collectionList.push(index)
-    }
-    let sl = await Api.getSourceList()
-    for (let i of sl) {
-      sourceList.push({
-        label: i,
-        value: i
-      })
+    login.value = await Api.getLoginStatus()
+    if (login.value) {
+      let db = await Api.getDB()
+      for (let index in db) {
+        rawDB[index] = db[index]
+        collectionList.push(index)
+      }
+      let sl = await Api.getSourceList()
+      for (let i of sl) {
+        sourceList.push({
+          label: i,
+          value: i
+        })
+      }
     }
   } catch (error) {
     console.log(error)
@@ -41,7 +45,7 @@ onMounted(async () => {
 <template>
   <n-config-provider :theme="theme">
     <n-card class="body" :bordered="false">
-      <n-page-header subtitle="Authorization Manageable Platform to Leverage Efficiency">
+      <n-page-header subtitle="Authorization Manageable db Platform to Leverage Efficiency">
         <n-divider></n-divider>
         <template #title>
           <a style="text-decoration: none; color: inherit">
@@ -50,7 +54,7 @@ onMounted(async () => {
         </template>
         <template #extra>
           <n-space>
-            <n-select size="small" clearable v-model:value="selectedSource" :options="sourceList"
+            <n-select size="small" clearable v-model:value="selectedSource" :options="login?sourceList:[]"
               placeholder="Please Select a Source" :style="{
                 minWidth: '185px'
               }" />
@@ -65,34 +69,40 @@ onMounted(async () => {
           </n-space>
         </template>
       </n-page-header>
-      <n-collapse>
-        <template #arrow>
-          <n-icon>
-            <DnsOutlined />
-          </n-icon>
-        </template>
-        <n-collapse-item :name="collectionName.toString()" :title="collectionName.toString()"
-          v-for="(collection, collectionName) in rawDB" :key="collectionName">
-          <template #header-extra>
-            Total Documents: {{ collection.length }}
-          </template>
-          <Collection :rawCollection=collection :collectionName=collectionName.toString()
-            :selectedSource="selectedSource ? selectedSource.toString() : 'all'" />
-        </n-collapse-item>
-      </n-collapse>
       <n-result v-if="serverError" status="500" title="500 Server Error" description="Please go check your server!">
+        <n-divider></n-divider>
       </n-result>
-      <n-divider></n-divider>
-      <n-tooltip trigger="hover" v-if="!serverError">
-        <template #trigger>
-          <n-button class="add_collection_card" @click="handleAddCollectionClick" dashed>
-            <n-icon size="35px">
-              <AddCircleOutlineRound />
+      <n-result v-else-if="!login" status="403" title="403 Forbidden" description="Seems like you are not logged in.">
+        <n-divider></n-divider>
+      </n-result>
+      <div v-else>
+        <n-collapse>
+          <template #arrow>
+            <n-icon>
+              <DnsOutlined />
             </n-icon>
-          </n-button>
-        </template>
-        Insert Collection
-      </n-tooltip>
+          </template>
+          <n-collapse-item :name="collectionName.toString()" :title="collectionName.toString()"
+            v-for="(collection, collectionName) in rawDB" :key="collectionName">
+            <template #header-extra>
+              Total Documents: {{ collection.length }}
+            </template>
+            <Collection :rawCollection=collection :collectionName=collectionName.toString()
+              :selectedSource="selectedSource ? selectedSource.toString() : 'all'" />
+          </n-collapse-item>
+        </n-collapse>
+        <n-divider></n-divider>
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <n-button class="add_collection_card" @click="handleAddCollectionClick" dashed>
+              <n-icon size="35px">
+                <AddCircleOutlineRound />
+              </n-icon>
+            </n-button>
+          </template>
+          Insert Collection
+        </n-tooltip>
+      </div>
     </n-card>
   </n-config-provider>
 </template>
