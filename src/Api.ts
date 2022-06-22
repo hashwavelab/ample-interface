@@ -5,7 +5,7 @@ const url = 'https://ample.hashwave.io/api/';
 class Api {
     static async getLoginStatus(): Promise<boolean>{
         return new Promise((resolve, reject) => {
-            axios.get(url)
+            axios.get(url + 'loginCheck')
                 .then((res: { data: boolean; }) => {
                     let data = res.data;
                     resolve(data);
