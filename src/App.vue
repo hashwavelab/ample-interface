@@ -69,13 +69,14 @@ onMounted(async () => {
           </n-space>
         </template>
       </n-page-header>
-      <n-result v-if="serverError" status="500" title="500 Server Error" description="Please go check your server!">
+      <n-result v-if="!login" status="403" title="403 Forbidden" description="Seems like you are not logged in.">
         <n-divider></n-divider>
       </n-result>
-      <n-result v-else-if="!login" status="403" title="403 Forbidden" description="Seems like you are not logged in.">
+      <n-result v-else-if="login && serverError" status="500" title="500 Server Error"
+        description="Please go check your server!">
         <n-divider></n-divider>
       </n-result>
-      <div v-else>
+      <div v-else-if="login && !serverError">
         <n-collapse>
           <template #arrow>
             <n-icon>
