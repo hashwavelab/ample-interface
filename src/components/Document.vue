@@ -4,7 +4,9 @@ import { EditRound, EditOffRound, SaveAltRound, CopyAllRound } from '@vicons/mat
 import { Bytes, ethers } from "ethers"
 import { FormInst, useLoadingBar, useMessage } from 'naive-ui'
 import { reactive, ref } from 'vue';
+import { useAuth0 } from '@auth0/auth0-vue';
 
+const { getAccessTokenSilently } = useAuth0();
 const data = defineProps<{ collectionName: string, documentId: string, rawDoc: any }>()
 const emit = defineEmits(['clone']);
 let rawDocument = reactive(<any>{})
@@ -49,9 +51,10 @@ async function handleSaveEditClick() {
             const provider = new ethers.providers.Web3Provider(ethereum);
             const signer = provider.getSigner();
             let address = await signer.getAddress()
-            let msg = await Api.getMessageToSign(address)
+            const token = await getAccessTokenSilently();
+            let msg = await Api.getMessageToSign(address, token)
             let signature = await signer.signMessage(msg as string | Bytes)
-            let res = await Api.editDocument(address, signature, data.collectionName, data.documentId, modDic)
+            let res = await Api.editDocument(token, address, signature, data.collectionName, data.documentId, modDic)
             if (res == 400) {
                 editing.value = false
                 loadingBar.error()
@@ -97,9 +100,10 @@ async function handleSaveCloneClick() {
             const provider = new ethers.providers.Web3Provider(ethereum);
             const signer = provider.getSigner();
             let address = await signer.getAddress()
-            let msg = await Api.getMessageToSign(address)
+            const token = await getAccessTokenSilently();
+            let msg = await Api.getMessageToSign(address, token)
             let signature = await signer.signMessage(msg as string | Bytes)
-            let res = await Api.newDocument(address, signature, data.collectionName, modDic)
+            let res = await Api.newDocument(token, address, signature, data.collectionName, modDic)
             if (res[0] == 400) {
                 active.value = false
                 loadingBar.error()

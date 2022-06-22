@@ -3,24 +3,14 @@ import axios from "axios"
 const url = 'https://ample.hashwave.io/api/';
 
 class Api {
-    static async getLoginStatus(): Promise<boolean>{
-        return new Promise((resolve, reject) => {
-            axios.get(url + 'loginCheck')
-                .then((res: { data: boolean; }) => {
-                    let data = res.data;
-                    resolve(data);
-                })
-                .catch((err: any) => {
-                    reject(err);
-                })
-        });
-    }
-
-    static async getMessageToSign(address: string): Promise<string> {
+    static async getMessageToSign(address: string, token: string): Promise<string> {
         return new Promise((resolve, reject) => {
             axios.get(url + 'auth/msg', {
                 params: {
                     address: address
+                },
+                headers: {
+                    Authorization: 'Bearer ' + token
                 }
             })
                 .then((res: { data: string; }) => {
@@ -34,10 +24,13 @@ class Api {
     }
 
     // this api does nothing and should never be used
-    static postSignature(address: string, signature: string): any {
+    static postSignature(token: string, address: string, signature: string): any {
         axios.post(url + 'auth/verify', {
             address: address,
-            signature: signature
+            signature: signature,
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
         })
             .then(function (res: any) {
                 console.log(res);
@@ -49,9 +42,13 @@ class Api {
             });
     }
 
-    static async getSourceList(): Promise<Array<string>> {
+    static async getSourceList(token: string): Promise<Array<string>> {
         return new Promise((resolve, reject) => {
-            axios.get(url + 'read/sourceList')
+            axios.get(url + 'read/sourceList',{
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
                 .then((res: { data: any; }) => {
                     let data = res.data;
                     resolve(data);
@@ -62,9 +59,13 @@ class Api {
         });
     }
 
-    static async getDB(): Promise<any> {
+    static async getDB(token: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            axios.get(url + 'read/db')
+            axios.get(url + 'read/db',{
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
                 .then((res: { data: any; }) => {
                     let data = res.data;
                     resolve(data);
@@ -75,14 +76,17 @@ class Api {
         });
     }
 
-    static async editDocument(address: string, signature: string, collectionName: string, id: string, modDic: any): Promise<number> {
+    static async editDocument(token: string, address: string, signature: string, collectionName: string, id: string, modDic: any): Promise<number> {
         return new Promise((resolve, reject) => {
             axios.post(url + 'auth/update/document', {
                 address: address,
                 signature: signature,
                 collectionName: collectionName,
                 id: id,
-                modDic: modDic
+                modDic: modDic,
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
             })
                 .then(function (res: any) {
                     resolve(res.status)
@@ -94,11 +98,14 @@ class Api {
     }
 
     // this api is currently not supported
-    static newCollection(address: string, signature: string, collectionName: string) {
+    static newCollection(token: string, address: string, signature: string, collectionName: string) {
         axios.post(url + 'auth/insert/collection', {
             address: address,
             signature: signature,
-            collectionName: collectionName
+            collectionName: collectionName,
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
         })
             .then(function (res: any) {
                 console.log(res);
@@ -108,13 +115,16 @@ class Api {
             });
     }
 
-    static newDocument(address: string, signature: string, collectionName: string, modDic: any): Promise<Array<any>> {
+    static newDocument(token: string, address: string, signature: string, collectionName: string, modDic: any): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
             axios.post(url + 'auth/insert/document', {
                 address: address,
                 signature: signature,
                 collectionName: collectionName,
-                modDic: modDic
+                modDic: modDic,
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
             })
                 .then(function (res: any) {
                     resolve([res.status, res.data])
