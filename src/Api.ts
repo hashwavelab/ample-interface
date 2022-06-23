@@ -5,7 +5,7 @@ const url = 'https://ample.hashwave.io/api/';
 class Api {
     static async getSourceList(token: string): Promise<Array<string>> {
         return new Promise((resolve, reject) => {
-            axios.get(url + 'db/sourceList',{
+            axios.get(url + 'db/sourceList', {
                 headers: {
                     Authorization: 'Bearer ' + token
                 }
@@ -22,7 +22,7 @@ class Api {
 
     static async getDB(token: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            axios.get(url + 'db/db',{
+            axios.get(url + 'db/db', {
                 headers: {
                     Authorization: 'Bearer ' + token
                 }
@@ -65,10 +65,12 @@ class Api {
                 collectionName: collectionName,
                 id: id,
                 modDic: modDic,
+            }, {
                 headers: {
                     Authorization: 'Bearer ' + token
                 }
-            })
+            }
+            )
                 .then(function (res: any) {
                     resolve(res.status)
                 })
@@ -79,21 +81,24 @@ class Api {
     }
 
     // this api is currently not supported
-    static newCollection(token: string, address: string, signature: string, collectionName: string) {
-        axios.post(url + 'ethsign/insert/collection', {
-            address: address,
-            signature: signature,
-            collectionName: collectionName,
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
-        })
-            .then(function (res: any) {
-                console.log(res);
+    static newCollection(token: string, address: string, signature: string, collectionName: string): Promise<Array<any>>{
+        return new Promise((resolve, reject) => {
+            axios.post(url + 'ethsign/insert/collection', {
+                address: address,
+                signature: signature,
+                collectionName: collectionName,
+            }, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
             })
-            .catch(function (err: any) {
-                console.log(err);
-            });
+                .then(function (res: any) {
+                    resolve([res.status, res.data])
+                })
+                .catch(function (err: any) {
+                    resolve([err.response.status, ""])
+                });
+        })
     }
 
     static newDocument(token: string, address: string, signature: string, collectionName: string, modDic: any): Promise<Array<any>> {
@@ -103,6 +108,7 @@ class Api {
                 signature: signature,
                 collectionName: collectionName,
                 modDic: modDic,
+            }, {
                 headers: {
                     Authorization: 'Bearer ' + token
                 }
