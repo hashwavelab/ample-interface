@@ -81,7 +81,11 @@ onMounted(async () => {
                 <n-icon :component="LightModeOutlined" />
               </template>
             </n-switch>
-            <n-button size="small" v-if="isAuthenticated" @click="Logout">Log out</n-button>
+            <n-button size="small" v-if="isAuthenticated" @click="Logout">Log out {{
+                typeof user.nickname == "string" ? (user.nickname.length > 9 ? user.nickname.slice(0, 5) + "..." +
+                  user.nickname?.slice(-4) : user.nickname.slice(0, 1).toUpperCase() + user.nickname.slice(1)) : ""
+            }}
+            </n-button>
             <n-button size="small" v-else @click="Login">Log in</n-button>
           </n-space>
         </template>
