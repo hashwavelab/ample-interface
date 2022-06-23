@@ -3,9 +3,43 @@ import axios from "axios"
 const url = 'https://ample.hashwave.io/api/';
 
 class Api {
+    static async getSourceList(token: string): Promise<Array<string>> {
+        return new Promise((resolve, reject) => {
+            axios.get(url + 'db/sourceList',{
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
+                .then((res: { data: any; }) => {
+                    let data = res.data;
+                    resolve(data);
+                })
+                .catch((err: any) => {
+                    reject(err);
+                })
+        });
+    }
+
+    static async getDB(token: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            axios.get(url + 'db/db',{
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
+                .then((res: { data: any; }) => {
+                    let data = res.data;
+                    resolve(data);
+                })
+                .catch((err: any) => {
+                    reject(err);
+                })
+        });
+    }
+
     static async getMessageToSign(address: string, token: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            axios.get(url + 'auth/msg', {
+            axios.get(url + 'ethsign/msg', {
                 params: {
                     address: address
                 },
@@ -23,62 +57,9 @@ class Api {
         });
     }
 
-    // this api does nothing and should never be used
-    static postSignature(token: string, address: string, signature: string): any {
-        axios.post(url + 'auth/verify', {
-            address: address,
-            signature: signature,
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
-        })
-            .then(function (res: any) {
-                console.log(res);
-                return 200
-            })
-            .catch(function (err: any) {
-                console.log(err);
-                return 400
-            });
-    }
-
-    static async getSourceList(token: string): Promise<Array<string>> {
-        return new Promise((resolve, reject) => {
-            axios.get(url + 'read/sourceList',{
-                headers: {
-                    Authorization: 'Bearer ' + token
-                }
-            })
-                .then((res: { data: any; }) => {
-                    let data = res.data;
-                    resolve(data);
-                })
-                .catch((err: any) => {
-                    reject(err);
-                })
-        });
-    }
-
-    static async getDB(token: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            axios.get(url + 'read/db',{
-                headers: {
-                    Authorization: 'Bearer ' + token
-                }
-            })
-                .then((res: { data: any; }) => {
-                    let data = res.data;
-                    resolve(data);
-                })
-                .catch((err: any) => {
-                    reject(err);
-                })
-        });
-    }
-
     static async editDocument(token: string, address: string, signature: string, collectionName: string, id: string, modDic: any): Promise<number> {
         return new Promise((resolve, reject) => {
-            axios.post(url + 'auth/update/document', {
+            axios.post(url + 'ethsign/update/document', {
                 address: address,
                 signature: signature,
                 collectionName: collectionName,
@@ -99,7 +80,7 @@ class Api {
 
     // this api is currently not supported
     static newCollection(token: string, address: string, signature: string, collectionName: string) {
-        axios.post(url + 'auth/insert/collection', {
+        axios.post(url + 'ethsign/insert/collection', {
             address: address,
             signature: signature,
             collectionName: collectionName,
@@ -117,7 +98,7 @@ class Api {
 
     static newDocument(token: string, address: string, signature: string, collectionName: string, modDic: any): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
-            axios.post(url + 'auth/insert/document', {
+            axios.post(url + 'ethsign/insert/document', {
                 address: address,
                 signature: signature,
                 collectionName: collectionName,

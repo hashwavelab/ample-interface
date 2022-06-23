@@ -27,11 +27,6 @@ function Logout() {
   logout({ returnTo: window.location.origin });
 }
 
-async function DoSomeThingWithToken() {
-  const token = await getAccessTokenSilently();
-  console.log(token)
-}
-
 onMounted(async () => {
   try {
     const token = await getAccessTokenSilently();
@@ -69,10 +64,8 @@ onMounted(async () => {
           </div>
         </template>
         <template #avatar>
-          <img v-if="theme == null" src="./assets/hashwave_light_transparent.png"
-            alt="Vue logo" height="45">
-          <img v-else src="./assets/hashwave_dark_transparent.png" alt="Vue logo"
-            height="45">
+          <img v-if="theme == null" src="./assets/hashwave_light_transparent.png" alt="Vue logo" height="45">
+          <img v-else src="./assets/hashwave_dark_transparent.png" alt="Vue logo" height="45">
         </template>
         <template #extra>
           <n-space>
@@ -120,7 +113,7 @@ onMounted(async () => {
         <n-divider></n-divider>
         <n-tooltip trigger="hover">
           <template #trigger>
-            <n-button class="add_collection_card" @click="DoSomeThingWithToken" dashed>
+            <n-button class="add_collection_card" @click="HandleAddCollectionClick" dashed>
               <n-icon size="35px">
                 <AddCircleOutlineRound />
               </n-icon>
